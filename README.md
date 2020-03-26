@@ -20,7 +20,7 @@ devtools::install_github("RamiKrispin/coronavirus")
 
 Os dados e a dashboard são atualizados diariamente.
 
-Os dados brutos são adquiridos do [repositório](https://github.com/RamiKrispin/coronavirus-csv){target="_blank"} sobre o Coronavírus do Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE).
+Os dados brutos são adquiridos do [repositório](https://github.com/RamiKrispin/coronavirus-csv) sobre o Coronavírus do Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE).
 
 ## Contato
 
