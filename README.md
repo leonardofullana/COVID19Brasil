@@ -1,15 +1,17 @@
 # COVID19Brasil
 **Dados do Coronavirus (COVID-19): Brasil x Outros Países**
 
-A Dashboard comparativa do Coronavírus (COVID-19) no Brasil x Outros Países dá uma visão geral do cenário da pandemia em 2020 para o Brasil. Essa dashboard foi construída na linguagem R usando o framework R Markdown e foi adaptada dessa [dashboard](https://ramikrispin.github.io/coronavirus_dashboard/){target="_blank"} por Rami Krispin.
+Acesse a dashboard [clicando aqui](https://leonardofullana.github.io/COVID19Brasil/Dashboard_COVID19_Brasil.html)
+
+A Dashboard comparativa do Coronavírus (COVID-19) no Brasil x Outros Países dá uma visão geral do cenário da pandemia em 2020 para o Brasil. Essa dashboard foi construída na linguagem R usando o framework R Markdown e foi adaptada dessa [dashboard](https://ramikrispin.github.io/coronavirus_dashboard/) por Rami Krispin.
 
 **Código**
 
-O código por trás dessa dashboard está disponível no [GitHub](https://github.com/leonardofullana/CoronavirusBrasil){target="_blank"}.
+O código por trás dessa dashboard está disponível no [GitHub](https://github.com/leonardofullana/CoronavirusBrasil).
 
 **Dados**
 
-Os dados utilizados nessa dashboard vêm do dataset disponível do pacote R [`{coronavirus}`](https://github.com/RamiKrispin/coronavirus){target="_blank"}. Para ter os últimos dados, tenha certeza de estar baixando a versão de desenvolvimento do pacote:
+Os dados utilizados nessa dashboard vêm do dataset disponível do pacote R [`{coronavirus}`](https://github.com/RamiKrispin/coronavirus). Para ter os últimos dados, tenha certeza de estar baixando a versão de desenvolvimento do pacote:
 
 ```
 install.packages("devtools")
@@ -23,7 +25,3 @@ Os dados brutos são adquiridos do [repositório](https://github.com/RamiKrispin
 **Contato**
 
 Para qualquer pergunta ou feedback, você pode me mandar um [tweet](https://twitter.com/leonardofullana) ou mensagem no [LinkedIn](https://www.linkedin.com/in/leonardofullana/).
-
-**Atualização**
-
-Os últimos dados são de `r format(max(coronavirus$date), "%A %B %d, %Y")` e a dashboard foi atualizada em `r format(Sys.time(), "%A %B %d, %Y")`.
