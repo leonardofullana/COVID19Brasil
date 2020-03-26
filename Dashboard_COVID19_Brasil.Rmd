@@ -1,5 +1,5 @@
 ---
-title: "COVID-19 - Brasil x Mundo"
+title: "COVID-19 - Brasil"
 author: "Leonardo Fullana"
 output: 
   flexdashboard::flex_dashboard:
@@ -171,7 +171,7 @@ plotly::plot_ly(data = df_daily) %>%
     arrowhead = 3,
     arrowsize = 1,
     showarrow = TRUE,
-    ax = -100,
+    ax = -20,
     ay = -150
   ) %>%
   plotly::add_annotations(
