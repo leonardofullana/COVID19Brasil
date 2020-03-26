@@ -1,5 +1,5 @@
 ---
-title: "Coronavirus: Brasil x Outros Países"
+title: "COVID-19 - Brasil x Mundo"
 author: "Leonardo Fullana"
 output: 
   flexdashboard::flex_dashboard:
