@@ -1,5 +1,5 @@
 ---
-title: "COVID-19 - Brasil"
+title: "COVID-19: Brasil/Mundo"
 author: "Leonardo Fullana"
 output: 
   flexdashboard::flex_dashboard:
@@ -19,7 +19,6 @@ data(coronavirus)
 # update_datasets()
 # View(coronavirus)
 # max(coronavirus$date)
-
 `%>%` <- magrittr::`%>%`
 #------------------ Parameters ------------------
 # Set colors
@@ -27,6 +26,7 @@ data(coronavirus)
 confirmed_color <- "purple"
 active_color <- "#1f77b4"
 recovered_color <- "forestgreen"
+projection_color <- "#FF7F50"
 death_color <- "red"
 #------------------ Data ------------------
 df <- coronavirus %>%
@@ -47,7 +47,6 @@ df <- coronavirus %>%
   dplyr::mutate(country = dplyr::if_else(country == "North Macedonia", "N.Macedonia", country)) %>%
   dplyr::mutate(country = trimws(country)) %>%
   dplyr::mutate(country = factor(country, levels = country))
-
 df_daily <- coronavirus %>%
   dplyr::filter(Country.Region == "Brazil") %>%
   dplyr::group_by(date, type) %>%
@@ -62,12 +61,11 @@ df_daily <- coronavirus %>%
   dplyr::mutate(active = confirmed - death) %>%
   dplyr::mutate(
     confirmed_cum = cumsum(confirmed),
+    projection_cum = cumsum(round(confirmed*100)/11),
     death_cum = cumsum(death),
     # recovered_cum = cumsum(recovered),
     active_cum = cumsum(active)
   )
-
-
 df1 <- coronavirus %>% dplyr::filter(date == max(date))
 ```
 
@@ -80,42 +78,36 @@ Row {data-width=400}
 ### confirmed {.value-box}
 
 ```{r}
-
 valueBox(
-  value = paste(format(sum(df$confirmed), big.mark = ","), "", sep = " "),
+  value = paste(format(sum(df$confirmed), big.mark = "."), "", sep = " "),
   caption = "Total de casos confirmados",
   icon = "fas fa-user-md",
   color = confirmed_color
 )
 ```
 
+### projection {.value-box}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+```{r}
+valueBox(
+  value = paste(format(round(sum((df$confirmed*100)/11),0), big.mark = "."), "", sep = " "),
+  caption = "Projeção de total de casos",
+  icon = "fas fa-chart-line",
+  color = projection_color
+)
+```
 
 ### death {.value-box}
 
 ```{r}
-
 valueBox(
-  value = paste(format(sum(df$death, na.rm = TRUE), big.mark = ","), " (",
-    round(100 * sum(df$death, na.rm = TRUE) / sum(df$confirmed), 1),
+  value = paste(format(sum(df$death, na.rm = TRUE), big.mark = "."), " (",
+    format(round(100 * sum(df$death, na.rm = TRUE) / sum(df$confirmed), 1),decimal.mark = ","),
     "%)",
     sep = ""
   ),
   caption = "Mortes (taxa de mortalidade)",
-  icon = "fas fa-heart-broken",
+  icon = "fas fa-skull-crossbones",
   color = death_color
 )
 ```
@@ -141,6 +133,15 @@ plotly::plot_ly(data = df_daily) %>%
   ) %>%
   plotly::add_trace(
     x = ~date,
+    y = ~paste(format(round(projection_cum),0),big.mark = "."),
+    type = "scatter",
+    mode = "lines+markers",
+    name = "Projeção",
+    line = list(color = projection_color),
+    marker = list(color = projection_color)
+  ) %>%
+  plotly::add_trace(
+    x = ~date,
     y = ~death_cum,
     type = "scatter",
     mode = "lines+markers",
@@ -159,7 +160,7 @@ plotly::plot_ly(data = df_daily) %>%
     arrowsize = 1,
     showarrow = TRUE,
     ax = -10,
-    ay = -210
+    ay = -90
   ) %>%
     plotly::add_annotations(
     x = as.Date("2020-03-13"),
@@ -171,8 +172,8 @@ plotly::plot_ly(data = df_daily) %>%
     arrowhead = 3,
     arrowsize = 1,
     showarrow = TRUE,
-    ax = -20,
-    ay = -150
+    ax = -90,
+    ay = -90
   ) %>%
   plotly::add_annotations(
     x = as.Date("2020-03-19"),
@@ -215,10 +216,8 @@ daily_confirmed <- coronavirus %>%
   dplyr::summarise(total = sum(cases)) %>%
   dplyr::ungroup() %>%
   tidyr::pivot_wider(names_from = country, values_from = total)
-
 #----------------------------------------
 # Plotting the data
-
 daily_confirmed %>%
   plotly::plot_ly() %>%
   plotly::add_trace(
@@ -304,7 +303,6 @@ df_EU <- coronavirus %>%
   dplyr::mutate(country = dplyr::if_else(country == "US", "Estados Unidos", country)) %>%
   dplyr::mutate(country = trimws(country)) %>%
   dplyr::mutate(country = factor(country, levels = country))
-
 plotly::plot_ly(
   data = df_EU,
   x = ~country,
@@ -338,7 +336,6 @@ plotly::plot_ly(
   )
 ```
 
-
 Mapa
 =======================================================================
 
@@ -357,7 +354,7 @@ cv_data_for_plot <- coronavirus %>%
   dplyr::mutate(log_cases = 2 * log(cases)) %>%
   dplyr::ungroup()
 cv_data_for_plot.split <- cv_data_for_plot %>% split(cv_data_for_plot$type)
-pal <- colorFactor(c("orange", "red", "green"), domain = c("confirmed", "death", "recovered"))
+pal <- colorFactor(c("orange", "red", "green"), domain = c("confirmed", "death"))
 map_object <- leaflet() %>% addProviderTiles(providers$Stamen.Toner)
 names(cv_data_for_plot.split) %>%
   purrr::walk(function(df) {
@@ -383,7 +380,6 @@ names(cv_data_for_plot.split) %>%
         )
       )
   })
-
 map_object %>%
   addLayersControl(
     overlayGroups = names(cv_data_for_plot.split),
@@ -391,7 +387,16 @@ map_object %>%
   )
 ```
 
+Dados
+=======================================================================
 
+```{r}
+coronavirus %>% 
+  dplyr::select(Data = date, Estado = Province.State, País = Country.Region, `Status do Paciente` = type, `Número de casos` = cases) %>%
+  DT::datatable(rownames = FALSE,
+            options = list(searchHighlight = TRUE, 
+                           pageLength = 20), filter = 'top')
+```
 
 
 
@@ -403,26 +408,22 @@ Sobre
 A Dashboard comparativa do Coronavírus (COVID-19) no Brasil x Outros Países dá uma visão geral do cenário da pandemia em 2020 para o Brasil. Essa dashboard foi construída na linguagem R usando o framework R Markdown e foi adaptada dessa [dashboard](https://ramikrispin.github.io/coronavirus_dashboard/){target="_blank"} por Rami Krispin.
 
 **Código**
-
-O código por trás dessa dashboard está disponível no [GitHub](https://github.com/leonardofullana/CoronavirusBrasil){target="_blank"}.
+O código por trás dessa dashboard está disponível no [GitHub](https://github.com/leonardofullana/CoronavirusBrasil){target="_blank"}
 
 **Dados**
-
 Os dados utilizados nessa dashboard vêm do dataset disponível do pacote R [`{coronavirus}`](https://github.com/RamiKrispin/coronavirus){target="_blank"}. Para ter os últimos dados, tenha certeza de estar baixando a versão de desenvolvimento do pacote:
-
 ```
 install.packages("devtools")
 devtools::install_github("RamiKrispin/coronavirus")
 ```
-
 Os dados e a dashboard são atualizados diariamente.
-
 Os dados brutos são adquiridos do [repositório](https://github.com/RamiKrispin/coronavirus-csv){target="_blank"} sobre o Coronavírus do Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE).
 
-**Contato**
+**Metodologia de Projeção**
+A estimativa é do Centro para Modelagem Matemática de Doenças Infecciosas da London School of Tropical Medicine, do Reino Unido, que fez uma estimativa da subnotificação da covid-19 em vários países. O levantamento mostra que no Brasil apenas 11% do total de casos foram diagnosticados. Link para a [notícia](https://www.correiobraziliense.com.br/app/noticia/brasil/2020/03/23/interna-brasil,836169/estudo-brasil-teria-11-vezes-mais-casos-de-coronavirus-do-que-o-regis.shtml)
 
+**Contato**
 Para qualquer pergunta ou feedback, você pode me mandar um [tweet](https://twitter.com/leonardofullana) ou mensagem no [LinkedIn](https://www.linkedin.com/in/leonardofullana/).
 
 **Atualização**
-
 Os últimos dados são de `r format(max(coronavirus$date), "%A %B %d, %Y")` e a dashboard foi atualizada em `r format(Sys.time(), "%A %B %d, %Y")`.
