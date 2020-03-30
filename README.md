@@ -1,7 +1,7 @@
 # COVID19Brasil
 ## Dados do Coronavirus (COVID-19): Brasil x Outros Países
 
-**Acesse a dashboard [clicando aqui](https://leonardofullana.github.io/COVID19Brasil/Dashboard_COVID19_Brasil.html)**
+**Acesse a dashboard [clicando aqui](http://coronavirus.leonardofullana.com/Dashboard_COVID19_Brasil.html)**
 
 A Dashboard comparativa do Coronavírus (COVID-19) no Brasil x Outros Países dá uma visão geral do cenário da pandemia em 2020 para o Brasil. Essa dashboard foi construída na linguagem R usando o framework R Markdown e foi adaptada dessa [dashboard](https://ramikrispin.github.io/coronavirus_dashboard/) por Rami Krispin.
 
