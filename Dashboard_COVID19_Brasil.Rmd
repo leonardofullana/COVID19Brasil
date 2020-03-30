@@ -12,11 +12,17 @@ output:
 ```{r setup, include=FALSE}
 #------------------ Packages ------------------
 library(flexdashboard)
-# install.packages("devtools")
-# devtools::install_github("RamiKrispin/coronavirus", force = TRUE)
+
+#checks if there is data update on the Github version
+
 library(coronavirus)
-data(coronavirus)
-# update_datasets()
+data("coronavirus")
+#install.packages("sf")
+#install.packages("ps")
+#install.packages("tibble")
+#install.packages("tidyselect")
+coronavirus::update_datasets()
+
 # View(coronavirus)
 # max(coronavirus$date)
 `%>%` <- magrittr::`%>%`
