@@ -44,8 +44,8 @@ df <- coronavirus %>%
     names_from = type,
     values_from = total
   ) %>%
-  # dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
-  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
+  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
+  #dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
   dplyr::arrange(-confirmed) %>%
   dplyr::ungroup() %>%
   dplyr::mutate(country = dplyr::if_else(Country.Region == "United Arab Emirates", "UAE", Country.Region)) %>%
@@ -63,13 +63,13 @@ df_daily <- coronavirus %>%
   ) %>%
   dplyr::arrange(date) %>%
   dplyr::ungroup() %>%
-  #dplyr::mutate(active = confirmed - death - recovered) %>%
+  dplyr::mutate(active = confirmed - death - recovered) %>%
   dplyr::mutate(active = confirmed - death) %>%
   dplyr::mutate(
     confirmed_cum = cumsum(confirmed),
     projection_cum = cumsum(round(confirmed*100)/11),
     death_cum = cumsum(death),
-    # recovered_cum = cumsum(recovered),
+    recovered_cum = cumsum(recovered),
     active_cum = cumsum(active)
   )
 df1 <- coronavirus %>% dplyr::filter(date == max(date))
@@ -92,6 +92,16 @@ valueBox(
 )
 ```
 
+### active {.value-box}
+
+```{r}
+valueBox(value = paste(format(sum(df$unrecovered, na.rm = TRUE), big.mark = ","), " (",
+                       round(100 * sum(df$unrecovered, na.rm = TRUE) / sum(df$confirmed), 1), 
+                       "%)", sep = ""), 
+         caption = "Casos ativos", icon = "fas fa-ambulance", 
+         color = active_color)
+```
+
 ### projection {.value-box}
 
 ```{r}
@@ -103,6 +113,16 @@ valueBox(
 )
 ```
 
+### recovered {.value-box}
+
+```{r}
+valueBox(value = paste(format(sum(df$recovered, na.rm = TRUE), big.mark = ","), " (",
+                       round(100 * sum(df$recovered, na.rm = TRUE) / sum(df$confirmed), 1), 
+                       "%)", sep = ""), 
+         caption = "Casos recuperados", icon = "fas fa-heartbeat", 
+         color = recovered_color)
+```
+
 ### death {.value-box}
 
 ```{r}
@@ -112,7 +132,7 @@ valueBox(
     "%)",
     sep = ""
   ),
-  caption = "Mortes (taxa de mortalidade)",
+  caption = "Mortes",
   icon = "fas fa-skull-crossbones",
   color = death_color
 )
@@ -146,6 +166,16 @@ plotly::plot_ly(data = df_daily) %>%
     line = list(color = projection_color),
     marker = list(color = projection_color)
   ) %>%
+  plotly::add_trace(
+    x = ~date,
+    y = ~recovered_cum,
+    type = "scatter",
+    mode = "lines+markers",
+    # name = "Active",
+    name = "Recuperados",
+    line = list(color = recovered_color),
+    marker = list(color = recovered_color)
+) %>%
   plotly::add_trace(
     x = ~date,
     y = ~death_cum,
@@ -296,8 +326,8 @@ df_EU <- coronavirus %>%
     names_from = type,
     values_from = total
   ) %>%
-  # dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
-  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
+  dplyr::mutate(unrecovered = confirmed - ifelse(is.na(recovered), 0, recovered) - ifelse(is.na(death), 0, death)) %>%
+  #dplyr::mutate(unrecovered = confirmed - ifelse(is.na(death), 0, death)) %>%
   dplyr::arrange(confirmed) %>%
   dplyr::ungroup() %>%
   dplyr::mutate(country = dplyr::if_else(Country.Region == "United Arab Emirates", "UAE", Country.Region)) %>%
@@ -326,6 +356,13 @@ plotly::plot_ly(
     # textposition = 'auto',
     name = "Mortes",
     marker = list(color = death_color)
+  ) %>%
+  plotly::add_trace(
+    y = ~recovered,
+    # text =  ~ death,
+    # textposition = 'auto',
+    name = "Recuperados",
+    marker = list(color = recovered_color)
   ) %>%
   plotly::layout(
     barmode = "stack",
@@ -360,7 +397,7 @@ cv_data_for_plot <- coronavirus %>%
   dplyr::mutate(log_cases = 2 * log(cases)) %>%
   dplyr::ungroup()
 cv_data_for_plot.split <- cv_data_for_plot %>% split(cv_data_for_plot$type)
-pal <- colorFactor(c("orange", "red", "green"), domain = c("confirmed", "death"))
+pal <- colorFactor(c("orange", "red", "green"), domain = c("confirmed", "death", "recovered"))
 map_object <- leaflet() %>% addProviderTiles(providers$Stamen.Toner)
 names(cv_data_for_plot.split) %>%
   purrr::walk(function(df) {
