@@ -212,7 +212,7 @@ plotly::plot_ly(data = df_daily) %>%
     ay = -150
   ) %>%
   plotly::add_annotations(
-    x = as.Date("2020-03-19"),
+    x = as.Date("2020-03-17"),
     y = 1,
     text = paste("Primeira morte"),
     xref = "x",
