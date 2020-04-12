@@ -17,7 +17,7 @@ library(flexdashboard)
 
 library(coronavirus)
 data("coronavirus")
-#install.packages("sf")
+#install.packages("glue")
 #install.packages("ps")
 #install.packages("tibble")
 #install.packages("tidyselect")
