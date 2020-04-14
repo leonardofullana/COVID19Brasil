@@ -154,8 +154,8 @@ plotly::plot_ly(data = df_daily) %>%
     mode = "lines+markers",
     # name = "Active",
     name = "Confirmados",
-    line = list(color = active_color),
-    marker = list(color = active_color)
+    line = list(color = confirmed_color),
+    marker = list(color = confirmed_color)
   ) %>%
   plotly::add_trace(
     x = ~date,
