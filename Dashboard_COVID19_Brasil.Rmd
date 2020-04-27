@@ -102,17 +102,6 @@ valueBox(value = paste(format(sum(df$unrecovered, na.rm = TRUE), big.mark = ",")
          color = active_color)
 ```
 
-### projection {.value-box}
-
-```{r}
-valueBox(
-  value = paste(format(round(sum((df$confirmed*100)/11),0), big.mark = "."), "", sep = " "),
-  caption = "Projeção de total de casos",
-  icon = "fas fa-chart-line",
-  color = projection_color
-)
-```
-
 ### recovered {.value-box}
 
 ```{r}
@@ -156,15 +145,6 @@ plotly::plot_ly(data = df_daily) %>%
     name = "Confirmados",
     line = list(color = confirmed_color),
     marker = list(color = confirmed_color)
-  ) %>%
-  plotly::add_trace(
-    x = ~date,
-    y = ~paste(format(round(projection_cum),0),big.mark = "."),
-    type = "scatter",
-    mode = "lines+markers",
-    name = "Projeção",
-    line = list(color = projection_color),
-    marker = list(color = projection_color)
   ) %>%
   plotly::add_trace(
     x = ~date,
@@ -463,10 +443,6 @@ devtools::install_github("RamiKrispin/coronavirus")
 ```
 Os dados e a dashboard são atualizados diariamente.
 Os dados brutos são adquiridos do [repositório](https://github.com/RamiKrispin/coronavirus-csv){target="_blank"} sobre o Coronavírus do Johns Hopkins University Center for Systems Science and Engineering (JHU CCSE).
-
-**Metodologia de Projeção**
-
-A estimativa é do Centro para Modelagem Matemática de Doenças Infecciosas da London School of Tropical Medicine, do Reino Unido, que fez uma estimativa da subnotificação da covid-19 em vários países. O levantamento mostra que no Brasil apenas 11% do total de casos foram diagnosticados. Link para a [notícia](https://www.correiobraziliense.com.br/app/noticia/brasil/2020/03/23/interna-brasil,836169/estudo-brasil-teria-11-vezes-mais-casos-de-coronavirus-do-que-o-regis.shtml)
 
 **Contato**
 
