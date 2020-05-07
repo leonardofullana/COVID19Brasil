@@ -21,7 +21,7 @@ data("coronavirus")
 #install.packages("ps")
 #install.packages("tibble")
 #install.packages("tidyselect")
-coronavirus::update_datasets()
+coronavirus::update_dataset()
 
 # View(coronavirus)
 # max(coronavirus$date)
